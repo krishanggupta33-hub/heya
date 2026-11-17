@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Heya 🤍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #Fdfbf7;
+            --card-bg: #ffffff;
+            --text-dark: #4a4141;
+            --text-pink: #d88c9a;
+            --btn-color: #f4b8c2;
+            --btn-hover: #e89ba7;
+            --tape-color: rgba(244, 233, 216, 0.85);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#e5ddd3 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+            color: var(--text-dark);
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Washi Tape Effect */
+        .washi-tape {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 120px;
+            height: 35px;
+            background: var(--tape-color);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 20;
+            opacity: 0.9;
+        }
+        
+        .washi-tape::after {
+            content: '';
+            position: absolute;
+            left: -5px;
+            right: -5px;
+            top: 0;
+            bottom: 0;
+            background: inherit;
+            clip-path: polygon(0 5%, 5% 10%, 0 20%, 5% 30%, 0 40%, 5% 50%, 0 60%, 5% 70%, 0 80%, 5% 90%, 0 100%, 100% 95%, 95% 90%, 100% 80%, 95% 70%, 100% 60%, 95% 50%, 100% 40%, 95% 30%, 100% 20%, 95% 10%, 100% 0);
+        }
+
+        /* Main Note Card */
+        .note-card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 420px;
+            background: var(--card-bg);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(74, 65, 65, 0.08), 0 5px 15px rgba(0,0,0,0.03);
+            text-align: center;
+            transform: rotate(1deg);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .note-card:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        /* Screen Layouts */
+        .screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screen.hidden {
+            display: none;
+        }
+
+        /* Typography */
+        .headline {
+            font-family: 'Caveat', cursive;
+            font-size: 2.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            transform: rotate(-2deg);
+        }
+
+        /* Cute Button */
+        .btn-open {
+            background-color: var(--btn-color);
+            color: #fff;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(232, 155, 167, 0.4);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .btn-open:hover {
+            background-color: var(--btn-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(232, 155, 167, 0.5);
+        }
+
+        .btn-open:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        /* The Reveal Message */
+        .message-container {
+            text-align: left;
+            width: 100%;
+        }
+
+        .message-line {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            line-height: 1.4;
+            color: var(--text-dark);
+            margin-bottom: 1.2rem;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .message-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            color: var(--text-pink);
+            font-weight: 700;
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 2rem;
+            font-size: 2rem;
+        }
+
+        /* Particle Emojis */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+            animation: popOut 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes popOut {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* Doodles */
+        .doodle {
+            position: absolute;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .doodle-1 { top: 10%; left: 10%; width: 60px; transform: rotate(15deg); }
+        .doodle-2 { bottom: 15%; right: 10%; width: 50px; transform: rotate(-20deg); }
+
+        @media (max-width: 480px) {
+            .note-card {
+                padding: 2.5rem 1.5rem;
+            }
+            .headline {
+                font-size: 2.4rem;
+            }
+            .message-line {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hand-drawn background elements (SVGs) -->
+    <svg class="doodle doodle-1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 10 C60 10, 65 30, 90 40 C65 50, 60 70, 50 90 C40 70, 35 50, 10 40 C35 30, 40 10, 50 10 Z" fill="none" stroke="#d88c9a" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+    <svg class="doodle doodle-2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 30 Q40 10 60 30 T100 30" fill="none" stroke="#d88c9a" stroke-width="6" stroke-linecap="round"/>
+        <path d="M20 50 Q40 30 60 50 T100 50" fill="none" stroke="#d88c9a" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+
+    <div class="note-card">
+        <div class="washi-tape"></div>
+        
+        <!-- Screen 1: The Intro -->
+        <div id="screen1" class="screen">
+            <h1 class="headline">Happy Princess Day, Heya 🙄✌🏼💕</h1>
+            <button id="openBtn" class="btn-open">Open me 💌</button>
+        </div>
+
+        <!-- Screen 2: The Letter -->
+        <div id="screen2" class="screen hidden">
+            <div class="message-container">
+                <p class="message-line">You thought I was just a wannabe cool, nonchalant guy?</p>
+                <p class="message-line">Turns out you're the only one who gets this side of me.</p>
+                <p class="message-line">Aap toh player ho, but I'll admit you're a pretty cute one.</p>
+                <p class="message-line signature">Happy Princess Day, <span class="highlight">Heya</span> 🤍</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const openBtn = document.getElementById('openBtn');
+            const screen1 = document.getElementById('screen1');
+            const screen2 = document.getElementById('screen2');
+            const messageLines = document.querySelectorAll('.message-line');
+
+            // Emoji Particle Effect
+            function createParticles(x, y) {
+                const emojis = ['✨', '💕', '🤍', '🌸'];
+                const particleCount = 12;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                    
+                    document.body.appendChild(particle);
+
+                    const angle = (i / particleCount) * 2 * Math.PI;
+                    const velocity = 80 + Math.random() * 60;
+                    
+                    const tx = Math.cos(angle) * velocity;
+                    const ty = Math.sin(angle) * velocity;
+                    const rot = Math.random() * 360;
+
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    particle.style.setProperty('--tx', `${tx}px`);
+                    particle.style.setProperty('--ty', `${ty}px`);
+                    particle.style.setProperty('--rot', `${rot}deg`);
+
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 1000);
+                }
+            }
+
+            openBtn.addEventListener('click', (e) => {
+                // Trigger particles
+                const rect = openBtn.getBoundingClientRect();
+                const btnX = rect.left + rect.width / 2;
+                const btnY = rect.top + rect.height / 2;
+                createParticles(btnX, btnY);
+
+                // Switch screens
+                setTimeout(() => {
+                    screen1.classList.add('hidden');
+                    screen2.classList.remove('hidden');
+
+                    // Staggered text reveal for that handwritten feeling
+                    messageLines.forEach((line, index) => {
+                        setTimeout(() => {
+                            line.classList.add('visible');
+                        }, 200 + (index * 800));
+                    });
+                }, 400); 
+            });
+        });
+    </script>
+</body>
+</html>
